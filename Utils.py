@@ -7,7 +7,7 @@ import math
 import torch
 import random
 import datetime
-
+import h5py
 import numpy as np
 import torch.optim as optim
 import pandas as pd
@@ -97,6 +97,11 @@ class HSIData:
             #                 "Trees", "Soil", "Water", "Residential", "Commercial", "Road",
             #                 "Highway", "Railway", "Parking Lot 1", "Parking Lot 2", "Tennis Court",
             #                 "Running Track"]
+        elif self.data_name == 'HS2018':
+            mat_data = h5py.File(self.__cur_dir + 'datasets\\Houston2018\\HoustonU.mat')
+            self.data = mat_data['houstonU'][()]
+            mat_gt = h5py.File(self.__cur_dir + 'datasets\\Houston2018\\HoustonU_gt.mat')
+            self.gt = mat_gt['houstonU_gt'][()]
         try:
             if self.__if_norm:
                 self.data = self.__normalize_data()
@@ -565,10 +570,12 @@ class Plotkits:
         get classification map , then save to given path
         '''
         try:
-            if mask.any() and pred.any():
+            if mask is None and pred is None:
+                pass
+            else:
                 if type(mask) != np.ndarray:
                     mask = Toolkits.to_numpy(mask)
-                label[mask] = pred+1
+                label[mask] = pred + 1
         except:
             print('Missing mask or pred')
 
