@@ -3,6 +3,7 @@
 This file contains the dataset for hyperspectral images and related helpers.
 """
 import os
+import copy
 import math
 import torch
 import random
@@ -565,10 +566,11 @@ class ModelTrainer:
 class Plotkits:
 
     @staticmethod
-    def draw_classification_map(path, label, mask=None, pred=None, colors=None, scale: float = 4.0, dpi: int = 400):
+    def draw_classification_map(path, groundtruth, mask=None, pred=None, colors=None, scale: float = 4.0, dpi: int = 400):
         '''
         get classification map , then save to given path
         '''
+        label = copy.copy(groundtruth)
         try:
             if mask is None and pred is None:
                 pass
@@ -593,7 +595,7 @@ class Plotkits:
         return None
     @staticmethod
     def draw_full_map(path, groundtruth, full_pred, full_mask, colors=None, scale: float = 4.0, dpi: int = 400):
-        label = groundtruth
+        label = copy.copy(groundtruth)
         label[full_mask] = full_pred[full_mask] + 1
         fig, ax = plt.subplots()
         spy.imshow(classes=label.astype(np.int16), fignum=fig.number, colors=colors)
